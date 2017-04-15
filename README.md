@@ -14,4 +14,11 @@ The settings allow the user to decide whether they want the timer to work for ev
 
 The user is also allowed set the warning intervals. They can choose to let the program warn you every 30 or 15 seconds. If the "On Time" option is selected, the notification will occur at the exact moment a rune or camp spawns.
 
-The volume is adjusted through a simple scrollbar.
+The volume is adjusted through a simple scrollbar. The timer at the bottom left shows the current game time according to the application.
+
+# To-Do List
+
+* Themes
+* Save/Load Settings
+* (Possible) Dota 2 Clock Memory Reader
+* Shift/Control/Alt + Shortcut Key Combo
