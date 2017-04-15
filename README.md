@@ -6,3 +6,12 @@ This program was designed to be used for beginner Dota 2 players who have a tend
 Clockwerk does not have any memory reading or setting functionalities. Nothing is injected. This is a standalone timer that is toggled through the user's shortcut key.
 
 The sounds are from http://www.dotasb.com/
+
+# Features
+![Preview](http://i.imgur.com/jq7M69k.png)
+
+The settings allow the user to decide whether they want the timer to work for every bounty rune or camp time stack. Both can be toggled on or off. Even though that is the case, if the user wants to turn the timer off there is a mute shortcut key that can be adjusted in the "Shortcuts" menu. The Shortcut menu allows the user to input any key they want.
+
+The user is also allowed set the warning intervals. They can choose to let the program warn you every 30 or 15 seconds. If the "On Time" option is selected, the notification will occur at the exact moment a rune or camp spawns.
+
+The volume is adjusted through a simple scrollbar.
