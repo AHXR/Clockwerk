@@ -30,6 +30,7 @@ gameclock = #0000FF
 ```
 
 **background** is the path where the background file is located. 
+
 **sounds** is the path where you have stored your sound replacements. Make sure the files match the same pattern:
 * start.wav - Timer toggled on
 * end.wav - Timer toggled off
@@ -39,6 +40,7 @@ gameclock = #0000FF
 * unmute.wav - Unmute sound
 
 **clock** - The color of the clock in hex.
+
 **gameclock** - The color of the game clock in hex.
 
 # To-Do List
