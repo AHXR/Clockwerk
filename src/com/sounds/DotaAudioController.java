@@ -26,6 +26,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
+import com.themes.ClockwerkThemes;
+
 /*
  * This class controls everything related to the audio that plays when certain
  * events are triggered. The audio that is played is threaded through the interface: Runnable.
@@ -72,12 +74,6 @@ public class DotaAudioController implements Runnable {
 		f_volume = -30; // Median between maximum gain and minimum gain is -37. (6, -80); default = 50
 	
 	/*
-	 * Creates an instance from the DotaAudioFileSystem class found inside of
-	 * DotaAudioFileSystem.java. Refer to that class for more information.
-	 */
-	DotaAudioFileSystem dafs = new DotaAudioFileSystem( );
-	
-	/*
 	 * This gave me a little trouble. It's very sloppy. The maximum gain you can use 
 	 * in AudioInputStream is 6. The minimum gain is -80. Because I was using a GUI
 	 * to adjust the volume via a scrollbar, I had to make it correlate with the volume.
@@ -98,7 +94,7 @@ public class DotaAudioController implements Runnable {
 	
 	/*
 	 * Function that muted the sound by a switch toggle. No parameters or anything like that. 
-	 * The reason for the playDotaSound being in swapped locations in eac hdifferent condition was 
+	 * The reason for the playDotaSound being in swapped locations in each different condition was 
 	 * because of how playDotaSound is setup.
 	 * 
 	 * If everything was muted, nothing would play. So the user wouldn't here a mute sound if I had muted
@@ -129,31 +125,31 @@ public class DotaAudioController implements Runnable {
 		
 		switch( id ) {
 			case SOUND_START: {
-				s_return = dafs.audioStart; // "The gears are in motion"
+				s_return = DotaAudioFileSystem.START.setting(); // "The gears are in motion"
 				break;
 			}
 			case SOUND_END: {
-				s_return = dafs.audioEnd; // "Must be getting rusty here"
+				s_return = DotaAudioFileSystem.END.setting(); // "Must be getting rusty here"
 				break;
 			}
 			case SOUND_TRIGGER: {
-				s_return = dafs.audioTrigger; // "My gears turn"
+				s_return = DotaAudioFileSystem.TRIGGER.setting(); // "My gears turn"
 				break;
 			}
 			case SOUND_WARNING: {
-				s_return = dafs.audioWarning; // "Hurry the hands of the clock"
+				s_return = DotaAudioFileSystem.WARNING.setting(); // "Hurry the hands of the clock"
 				break;
 			}
 			case SOUND_MUTE: {
-				s_return = dafs.audioMute; // "SILENCE"
+				s_return = DotaAudioFileSystem.MUTE.setting(); // "SILENCE"
 				break;
 			}
 			case SOUND_UNMUTE: {
-				s_return = dafs.audioUnmute; // "Speak your last"
+				s_return = DotaAudioFileSystem.UNMUTE.setting(); // "Speak your last"
 				break;
 			}
 		}
-		return dafs.directoryPrefix + s_return;
+		return DotaAudioFileSystem.DIR.setting() + s_return;
 	}
 	
 	/*
@@ -169,15 +165,12 @@ public class DotaAudioController implements Runnable {
 		 */
 		if( !b_muted ) {
 			try{
-				
 				/*
 				 * Here I used returnAudioPath to convert the path of the audio into a resource.
 				 * Then the audio was converted into a file, which allowed me to break it into AudioInputStream.
 				 */
-				URL
-					u_sound = getClass( ).getResource( returnAudioPath( sound_num ) );
 				File
-					s_file = new File( u_sound.toURI( ) );
+					s_file = new File( ClockwerkThemes.s_run_path + ClockwerkThemes.ThemeSettings.FOLDER.setting() + returnAudioPath( sound_num ) );
 				
 	            AudioInputStream ais = AudioSystem.getAudioInputStream( s_file );
 	            Clip aud = AudioSystem.getClip();  	
@@ -187,7 +180,7 @@ public class DotaAudioController implements Runnable {
 	             * The audio file is now open. Let's adjust the volume based on the changeVolume algorithm. 
 	             */
 	            FloatControl
-	            	fc_volume = (FloatControl) aud.getControl(FloatControl.Type.MASTER_GAIN );
+	            	fc_volume = (FloatControl) aud.getControl( FloatControl.Type.MASTER_GAIN );
 	            
 	            fc_volume.setValue( f_volume );
 	            

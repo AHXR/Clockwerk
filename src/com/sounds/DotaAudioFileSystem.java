@@ -23,21 +23,28 @@ package com.sounds;
  * just so I can quickly adjust any filename changes.
  * 
  * @author AR
- * @version 1.0
+ * @version 1.1
  */
-public class DotaAudioFileSystem {
+public enum DotaAudioFileSystem {
+	DIR 		("/sounds/"),
+	START		("start.wav"),
+	END			("end.wav"),
+	TRIGGER		("trigger.wav"),
+	WARNING		("warning.wav"),
+	MUTE		("silence.wav"),
+	UNMUTE		("unmute.wav");
 	
-	public final String directoryPrefix = "/com/sounds/";
+	private String 
+		setting;
 	
-	public final String audioStart = "start.wav";
+	DotaAudioFileSystem( String setting ) { this.setting = setting; }
+	public String setting( ) { return setting; }
 	
-	public final String audioEnd = "end.wav";
-	
-	public final String audioTrigger = "trigger.wav";
-	
-	public final String audioWarning = "warning.wav";
-	
-	public final String audioMute = "silence.wav";
-	
-	public final String audioUnmute = "unmute.wav";
+	/*
+	 * This function was created so that the user can set the sound directory
+	 * to where they choose.
+	 */
+	public void changeValue( String newValue ) {
+		this.setting = newValue;
+	}
 }

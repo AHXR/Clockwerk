@@ -18,16 +18,27 @@
 
 // Imports.
 import com.sounds.DotaAudioController;
+import com.themes.ClockwerkThemes;
+
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -36,6 +47,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import javax.swing.JSlider;
@@ -52,15 +65,31 @@ public class ClockwerkGUI extends JFrame {
 	
 	private static final long serialVersionUID = -2400434487677545157L;
 	private JPanel contentPane;
+	private boolean isLoadingTheme = true;
 
+	static ClockwerkGUI frame;
+	
 	// main()
 	public static void main(String[] args) {
+		Path
+			crp = Paths.get( "" );
+
+		ClockwerkThemes.s_run_path = crp.toAbsolutePath().toString();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Prepares the GUI.
 				try {
-					ClockwerkGUI frame = new ClockwerkGUI();
-					frame.setVisible(true);
+					frame = new ClockwerkGUI();
+					
+					/*
+					 * Load the default theme.
+					 */
+					try {
+						ClockwerkThemes.loadTheme( "default.ini" );
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}			
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -230,6 +259,9 @@ public class ClockwerkGUI extends JFrame {
 		JMenuBar menuBar_1 = new JMenuBar();
 		mnSettings.add(menuBar_1);
 		
+		JMenu mnThemes = new JMenu("Themes");
+		menuBar.add(mnThemes);
+		
 		JLabel lblGameTime = new JLabel("0:00");
 		lblGameTime.setVisible(false);
 		lblGameTime.setForeground(Color.WHITE);
@@ -241,9 +273,69 @@ public class ClockwerkGUI extends JFrame {
 		lblBackground.setIcon(new ImageIcon(ClockwerkGUI.class.getResource("/com/images/background.png")));
 		lblBackground.setBounds(0, 0, 655, 361);
 		contentPane.add(lblBackground);
+	
 		/*
-		 * GUI Creation Ends
+		 * GUI Creation Ends. But now we're going to load some themes dynamically based on what's inside of the "themes" folder.
+		 * This program gathers all the file names inside of "themes" and creates menus out of them.
+		 */	
+		File f_themes_folder = null;
+		f_themes_folder = new File( ClockwerkThemes.s_run_path + ClockwerkThemes.ThemeSettings.FOLDER.setting() );
+		
+		/*
+		 * With all the files now collected. This program is going to start building menus out of them.
+		 * The files are going to be compacted into f_theme_names and mntmMenuThemes is going to be
+		 * used to store all the menus created by this retrieval process..
 		 */
+		File[ ] f_theme_names = f_themes_folder.listFiles( );
+		JMenuItem[ ] mntmMenuThemes = new JMenuItem[ f_theme_names.length ];
+			
+		for( int i = 0; i < f_theme_names.length; i ++ ) {
+			/*
+			 * Getting the extension of the file.
+			 */
+			String
+				f_ext = null,
+				f_filename;
+			int
+				f_idx;
+				
+			f_filename = f_theme_names[ i ].getName( );
+			f_idx = f_filename.lastIndexOf( '.' );
+				
+			if( f_filename.lastIndexOf( '.' ) > 0 ) {
+				f_ext = f_filename.substring( f_idx + 1);
+			}
+				
+			// DEBUG
+			// System.out.print( f_filename + " | " + f_ext + "\r\n" );
+				
+			/*
+			 * The item in the directory must be a file before it's even listed.
+			 * Any sort of other files will break the process.
+			 */
+			if( f_theme_names[ i ].isFile( ) && f_ext.equals( ClockwerkThemes.ThemeSettings.EXTENSION.setting() ) ) { 
+				String
+					f_name = f_theme_names[ i ].getName( ).replaceFirst( "[.][^.]+$", ""); // Removing the extension.
+
+				mntmMenuThemes[ i ] = new JMenuItem( f_name );
+				mnThemes.add( mntmMenuThemes[ i ] );
+					
+				/*
+				 * Here we are creating an event if the user decides to change themes here.
+				 * Refer to ClockwerkThemes.Java for the loadTheme process.
+				 */
+				mntmMenuThemes[ i ].addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e) {
+						try {
+							ClockwerkThemes.loadTheme( f_filename );
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				});	
+			}
+		}
 		
 		/*
 		 * This is where the cwt instance becomes extremely active. This is a bit sloppy 
@@ -260,7 +352,60 @@ public class ClockwerkGUI extends JFrame {
 			public void run( ) {
 				
 				/*
-				 * Checking if the timer is active or not. If the timer isn't active, I don't want this code
+				 * Checks if a theme reset is scheduled to happen. I did this to avoid going through the
+				 * complications of messing with lblBackground outside of this class.
+				 */
+				if( ClockwerkThemes.b_theme_reset ) {
+					
+					/*
+					 * Creating the GUI so the user knows what's going on. Then the program is going to try
+					 * to load the image from the theme. JFrame was used to create a dialogue to let the 
+					 * user know if the theme wasn't set.
+					 */
+					JFrame gui_message = new JFrame( );
+					
+					try {
+						BufferedImage i_wall = ImageIO.read( new File( ClockwerkThemes.s_run_path + ClockwerkThemes.ThemeSettings.FOLDER.setting() + ClockwerkThemes.s_wallpaper_path ) );
+						
+						lblBackground.setIcon( new ImageIcon( i_wall ) );
+						
+						lblGameTime.setForeground( Color.decode( ClockwerkThemes.s_game_clock_code ) );
+						lblTime.setForeground( Color.decode( ClockwerkThemes.s_clock_code ) );
+						
+						/*
+						 * This will make sure the default theme was loaded before the GUI is visible.
+						 */
+						if( isLoadingTheme ) {
+							isLoadingTheme = false;
+							frame.setVisible(true);
+						}
+						else
+							JOptionPane.showMessageDialog( gui_message, "Your theme has been set!", "Theme", JOptionPane.INFORMATION_MESSAGE);
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+						
+						/*
+						 * If the theme couldn't be set during load time, the application will close itself and tell the user to check their default theme file.
+						 * Otherwise everything should run without a problem.
+						 */
+						if( isLoadingTheme ) {
+							JOptionPane.showMessageDialog( gui_message, "There was an error loading the default theme. Check your 'themes' folder.", "Theme Error", JOptionPane.ERROR_MESSAGE);
+							System.exit( 0 );
+						}
+						else
+							JOptionPane.showMessageDialog( gui_message, "This theme could not be set!", "Theme Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					/*
+					 * Resetting b_theme_reset because we don't want your theme to constantly change just because you decided to change it
+					 * in the first place.
+					 */
+					ClockwerkThemes.b_theme_reset = false;
+				}
+				
+				/*
+				 * Checking if the clock timer is active or not. If the timer isn't active, I don't want this code
 				 * to continue to process.
 				 */
 				if( cwt.isTimerActive() ) {		
@@ -283,7 +428,7 @@ public class ClockwerkGUI extends JFrame {
 					 */
 					if( !lblGameTime.isVisible(  ) ) {
 						lblGameTime.setVisible( true );
-						lblGameTime.setForeground(Color.WHITE);
+						lblGameTime.setForeground( Color.decode( ClockwerkThemes.s_game_clock_code ) );
 					}
 				}
 				
