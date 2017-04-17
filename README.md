@@ -16,9 +16,33 @@ The user is also allowed set the warning intervals. They can choose to let the p
 
 The volume is adjusted through a simple scrollbar. The timer at the bottom left shows the current game time according to the application.
 
+# Themes
+![Preview](http://i.imgur.com/1E9zR0g.png)
+
+In version 1.1, themes were introduced. Users can create themes and load them directly into Clockwerk. By default, I have included 3 themes (Default Clockwerk Theme, Crystal Maiden and Invoker). Below is an example from "crystal maiden.ini"
+
+```ini
+[theme]
+background = cm/bg.jpg
+sounds = /cm/sounds/
+clock = #FF00FF
+gameclock = #0000FF
+```
+
+**background** is the path where the background file is located. 
+**sounds** is the path where you have stored your sound replacements. Make sure the files match the same theme:
+* start.wav - Timer toggled on
+* end.wav - Timer toggled off
+* trigger.wav - Timer hits 0:00
+* warning.wav - Warning sound
+* silence.wav - Mute sound
+* unmute.wav - Unmute sound
+**clock** - The color of the clock in hex.
+**gameclock** - The color of the game clock in hex.
+
 # To-Do List
 
-* Themes
+~~* Themes~~
 * Save/Load Settings
 * (Possible) Dota 2 Clock Memory Reader
 * Shift/Control/Alt + Shortcut Key Combo
