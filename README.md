@@ -43,7 +43,7 @@ gameclock = #0000FF
 
 # To-Do List
 
-~~Themes~~
-* Save/Load Settings
-* (Possible) Dota 2 Clock Memory Reader
-* Shift/Control/Alt + Shortcut Key Combo
+- [x] Themes
+- [ ] Save/Load Settings
+- [ ] (Possible) Dota 2 Clock Memory Reader
+- [ ] Shift/Control/Alt + Shortcut Key Combo
