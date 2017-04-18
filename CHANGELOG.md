@@ -1,7 +1,7 @@
 1.2 (4/18/2017)
 
 * Generic Code Cleanup -- Renamed most packages to something more appropriate to the java naming convention
-* Settings are now automatically saved and loaded
+* Settings are now automatically saved and loaded (Including themes)
 * GUI No longer resizable
 * Internal notification system added
 * More user friendly popup messages
