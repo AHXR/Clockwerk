@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-import com.sounds.DotaAudioController;
+import clockwerk.global.GlobalKeyShortcuts;
 
 /*
  * ShortcutKeyListener is a class that worked with NativeKeyListener to check any keys
@@ -55,7 +55,7 @@ public class ShortcutKeyListener implements NativeKeyListener {
 	private static boolean 
 		debug = false;
 	private static String
-		s_text = "", s_debug_key = "Num Lock", s_startstop_key = "F5", s_mute_key = "F6";
+		s_text = "", s_debug_key = GlobalKeyShortcuts.DEBUG.settings(), s_startstop_key = GlobalKeyShortcuts.TOGGLE.settings(), s_mute_key = GlobalKeyShortcuts.MUTE.settings();
 	
 	/*
 	 * This event is triggered the moment the user presses a key.
@@ -75,22 +75,22 @@ public class ShortcutKeyListener implements NativeKeyListener {
 			 * The start/stop key has now been pressed. The program now calls upon the ClockwerkTimer
 			 * class and the DotaAudioController class to adjust the proper variables and start/stop the timer.
 			 */
-			ClockwerkTimer cwt = new ClockwerkTimer( );
-			DotaAudioController dac = new DotaAudioController( );
+			TimerControlEvents cwt = new TimerControlEvents( );
+			MasterControlSound dac = new MasterControlSound( );
 				
 			if( !cwt.isTimerActive() )
 				dac.playDotaSound( dac.SOUND_START );
 			else 
 				dac.playDotaSound( dac.SOUND_END );
 			
-			cwt.setTimerStatus( !cwt.isTimerActive() );
+			TimerControlEvents.setTimerStatus( !cwt.isTimerActive() );
 		}
 		
 		/*
 		 * Mute key and the proper adjustments afterwards.
 		 */
 		if( s_text.equals( s_mute_key ) ) {
-			DotaAudioController dac = new DotaAudioController( );
+			MasterControlSound dac = new MasterControlSound( );
 			dac.muteSoundSwitch( );
 		}
 	}
@@ -116,7 +116,7 @@ public class ShortcutKeyListener implements NativeKeyListener {
 	 */
 	public void showShortcutDialogue( int keyid ) {
 		JFrame gui_shortcut = new JFrame( "Change Shortcut" );
-	    String s_key = JOptionPane.showInputDialog( gui_shortcut, "Type the key you would like to change this shortcut to. Your current keys: \r\n\r\nStart/Stop: '" + s_startstop_key + "'\r\nMute: '" + s_mute_key + "'");
+	    String s_key = JOptionPane.showInputDialog( gui_shortcut, "Type the key you would like to change this shortcut to. Your current keys: \r\n\r\nStart/Stop: '" + GlobalKeyShortcuts.TOGGLE.settings() + "'\r\nMute: '" + GlobalKeyShortcuts.MUTE.settings() + "'");
 
 	    /*
 	     * The key needs to be a proper value. If it's nothing or the user decided to cancel the shortcut change, nothing will happen.
@@ -124,12 +124,14 @@ public class ShortcutKeyListener implements NativeKeyListener {
 	    if( s_key != null ) {
 	    	switch( keyid ) {
 	    		case 0: {
-	    			s_startstop_key = s_key;
+	    			GlobalKeyShortcuts.TOGGLE.changeValue( s_key );
+	    			ClientSettingsControl.saveSettings();
 	    			break;
 	    		}
 	    		
 	    		case 1: {
-	    			s_mute_key = s_key;
+	    			GlobalKeyShortcuts.MUTE.changeValue( s_key );
+	    			ClientSettingsControl.saveSettings();
 	    			break;
 	    		}
 	    	}
