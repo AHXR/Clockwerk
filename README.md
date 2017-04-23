@@ -55,4 +55,4 @@ I've uploaded a web version of Clockwerk that works exactly how the Java version
 
 ![Preview](http://i.imgur.com/dhaN9dQ.jpg)
 
-![Preview](https://puu.sh/vtlqG/9398577b8e.png
+![Preview](https://puu.sh/vtlqG/9398577b8e.png)
