@@ -51,8 +51,9 @@ gameclock = #0000FF
 - [ ] Shift/Control/Alt + Shortcut Key Combo
 
 # Web Version
-I've uploaded a web version of Clockwerk that works exactly how the Java version works. Unfortunately, javascript cannot detect keys while the browser isn't focused. Therefore the hotkeys only work when the user presses the hotkey in the browser. This version does not have themes as of yet.
+I've uploaded a web version of Clockwerk that works exactly how the Java version works. Unfortunately, javascript cannot detect keys while the browser isn't focused. Therefore the hotkeys only work when the user presses the hotkey in the browser.
 
 ![Preview](http://i.imgur.com/dhaN9dQ.jpg)
+![Preview](http://i.imgur.com/Cg7Sf8k.jpg)
 
-![Preview](https://puu.sh/vtlqG/9398577b8e.png)
+![Preview](http://i.imgur.com/wmVgq1C.jpg)
