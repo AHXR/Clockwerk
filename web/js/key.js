@@ -53,6 +53,7 @@ $(document).keydown(function(e) {
                     break;
                 }
             } 
+            break;
         } 
         case 1: { // Toggle shortcut key set.
             a_key_settings["TOGGLE"] = e.which;

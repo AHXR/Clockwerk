@@ -45,6 +45,11 @@ $(function() {
         autoOpen: false,
         modal: true
     });
+    
+    $("#notifymessage").dialog({
+        autoOpen: false,
+        modal: true
+    });
 
 
     $("input").checkboxradio({
@@ -56,6 +61,11 @@ $(function() {
 
 function refreshShortcutContent() {
     document.getElementById("shortcut").innerHTML = "You are currently changing your " + ((i_changing == 1) ? "toggle" : "mute/unmute") + " key.<br /><br />The next key you press will be set as the bind!";
+}
+
+function showNotification( msg ) {
+    document.getElementById("notifymessage").innerHTML = msg;
+    $("#notifymessage").dialog("open");
 }
 
 function endShortcutDia() {

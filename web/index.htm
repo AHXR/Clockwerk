@@ -50,8 +50,8 @@
         <script type="text/javascript" src="js/time.js"></script>
         <script type="text/javascript" src="js/audio.js"></script>
         <script type="text/javascript" src="js/key.js"></script>
-		<script type = "text/javascript">
-			
+        <script type="text/javascript" src="js/theme.js"></script>
+		<script type="text/javascript">
             var
                 b_timer_active,
                 b_thirty,
@@ -64,6 +64,9 @@
 			$( function( ) {
                 /* EVENTS */
                 $( "#settingsButton" ).click( function( event ) {
+                    
+                    $( "#f_settings_dia" ).effect( "slide" );
+                    
                     f_settings_dia.dialog( "open" );
                 });
                 
@@ -93,7 +96,26 @@
                     $("#shortcut").dialog("open");
                 });
                 
+                $( "#muteButton" ).click( function( event ) {
+                    i_changing = 2;
+                    refreshShortcutContent( );
+                    $("#shortcut").dialog("open");
+                });
+                
+                $( "#theme_cw" ).click( function( event ) {
+                    changeTheme( "Clockwerk" );
+                });
+                
+                $( "#theme_cm" ).click( function( event ) {
+                    changeTheme( "Crystal Maiden" );
+                });
+                
+                $( "#theme_invoker" ).click( function( event ) {
+                    changeTheme( "Invoker" );
+                });
+                
                 updateClock( );
+                changeTheme( "Clockwerk", 1 );
 			});
             
             
@@ -106,8 +128,10 @@
             <div id="start" title="Clockwerk"><p>Welcome to Clockwerk. <br /><br />Just be aware that if you plan on using the web version of this application,
             you cannot activiate your shortcut keys <b>unless</b> the browser is focused. <br /><br />Download the client version for complete
             access.</p></div>
+            
             <div id="shortcut" title="Clockwerk"></div>
-			
+			<div id="notifymessage" title="Clockwerk"></div>
+            
             <button id="settingsButton" class="ui-button ui-widget ui-corner-all">Settings</button>
             
             <div id="settingsdialog" title="Settings">
@@ -150,7 +174,14 @@
                 <fieldset>
                     <legend>Themes</legend>
                     <div class="gensettings">
-                        Coming soon..
+                        <label for="theme_cw">Clockwerk</label>
+                        <input type="checkbox" name="theme_cw" id="theme_cw">
+                        
+                        <label for="theme_cm">Crystal Maiden</label>
+                        <input type="checkbox" name="theme_cm" id="theme_cm">
+                        
+                        <label for="theme_invoker">Invoker</label>
+                        <input type="checkbox" name="theme_invoker" id="theme_invoker">
                     </div>
                 </fieldset>
             </div>
