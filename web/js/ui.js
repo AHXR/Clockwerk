@@ -20,7 +20,7 @@ var
     f_gen_control,
     f_settings_butt;
 
-$(function() {
+$( document ).ready(function() {
     
     /* UI CREATION */
     $("#volume").slider({
@@ -33,7 +33,25 @@ $(function() {
         autoOpen: false,
         modal: true,
         width: 500,
-        height: 470
+        height: 470,
+        close: function( event, ui ) {
+            jQuery.ajax({
+                type: "POST",
+                url: "include/user_json.php",
+                dataType: "json",
+                data: {functionname: "saveSettings", arguments: [a_user_data]},
+                
+                success: function (obj, textstatus) {
+                    if( obj == "Internal Error" )
+                        showNotification( "There was an error trying to save your settings!" );
+                },
+                
+                error: function(xhr, textStatus, errorThrown){
+                    showNotification( "There was an error trying to save your settings!" );
+                }
+           
+            })
+        }
     });
 
     $("#start").dialog({
