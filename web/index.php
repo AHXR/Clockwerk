@@ -26,6 +26,8 @@
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/flick/jquery-ui.css" type="text/css" />
 		
 		<link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One" rel="stylesheet">
+        
+        <?php include "include/user.php"; init( ); ?>
 		
 		<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -64,30 +66,33 @@
 			$( function( ) {
                 /* EVENTS */
                 $( "#settingsButton" ).click( function( event ) {
-                    
                     $( "#f_settings_dia" ).effect( "slide" );
-                    
                     f_settings_dia.dialog( "open" );
                 });
                 
                 $( "#i_runes" ).click( function( event ) {
                     b_runes = $( "#i_runes" ).is( ':checked' );
+                    updateUserButtonValues( "runes" );
                 });
                 
                 $( "#i_camps" ).click( function( event ) {
                     b_stacks = $( "#i_camps" ).is( ':checked' );
+                    updateUserButtonValues( "camps" );
                 });
                 
                 $( "#i_thirty" ).click( function( event ) {
                     b_thirty = $( "#i_thirty" ).is( ':checked' );
+                    updateUserButtonValues( "thirty" );
                 });
                 
                 $( "#i_fifteen" ).click( function( event ) {
                     b_fifteen = $( "#i_fifteen" ).is( ':checked' );
+                    updateUserButtonValues( "fifteen" );
                 });
                 
                 $( "#i_ontime" ).click( function( event ) {
                     b_ontime = $( "#i_ontime" ).is( ':checked' );
+                    updateUserButtonValues( "ontime" );
                 });
                 
                 $( "#toggleButton" ).click( function( event ) {
@@ -114,12 +119,25 @@
                     changeTheme( "Invoker" );
                 });
                 
-                updateClock( );
-                changeTheme( "Clockwerk", 1 );
-			});
-            
-            
-		</script>
+                updateClock( );       
+                
+                try {
+                    if( b_db_error ) {
+                        showNotification( "There was an error loading your settings!" );
+                        changeTheme( "Clockwerk", 1 );
+                    }
+                } catch( e ) {
+                    updateButtonToSettings( "runes" );
+                    updateButtonToSettings( "camps" );
+                    updateButtonToSettings( "thirty" );
+                    updateButtonToSettings( "fifteen" );
+                    updateButtonToSettings( "ontime" );
+                    updateButtonToSettings( "toggleButton" );
+                    updateButtonToSettings( "muteButton" );    
+                    changeTheme( a_user_data[ "theme" ], 1 );
+                }
+			}); 
+		</script>   
 	</head>
 	
 	<body>

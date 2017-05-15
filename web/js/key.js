@@ -57,11 +57,13 @@ $(document).keydown(function(e) {
         } 
         case 1: { // Toggle shortcut key set.
             a_key_settings["TOGGLE"] = e.which;
+            a_user_data[ "toggleButton" ] = e.which;
             endShortcutDia( );
             break;
         }
         case 2: { // Mute shortcut key set.
             a_key_settings["MUTE"] = e.which;
+            a_user_data[ "muteButton" ] = e.which;
             endShortcutDia( );
             break;
         }

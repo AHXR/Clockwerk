@@ -1,3 +1,4 @@
+<?php
 /*
  * Clockwerk: Dota 2 Rune and Camp Stacking Timer.
  * Copyright (C) 2017 AR.
@@ -16,27 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var
-    a_key_settings = {
-        TOGGLE: 116, // F5
-        MUTE: 117 // F6
-    };
-var
-    a_clock_settings = {
-        DEFAULT: 120000,
-        INTERVAL: 1000
-    }
-    
-function updateButtonToSettings(buttonName) {
-    if (buttonName == "toggleButton" || buttonName == "muteButton") {
-        $(buttonName).prop("checked", "#" + a_user_data[buttonName]);
-        $(buttonName).button("refresh");
-    } else {
-        $("#i_" + buttonName).prop("checked", (a_user_data[buttonName] == "1") ? true : false);
-        $("#i_" + buttonName).button("refresh");
-    }
-}
-
-function updateUserButtonValues( buttonName ) {
-    a_user_data[ buttonName ] = $( "#i_" + buttonName ).is( ':checked' ) ? "1" : "0";
-}
+$GLOBALS["SQL_HOST"] = "localhost";
+$GLOBALS["SQL_USER"] = "root";
+$GLOBALS["SQL_PASS"] = "";
+$GLOBALS["SQL_DB"] = "clockwerk";
+?>

@@ -37,14 +37,16 @@ var a_themes = [
     The silent parameter is used whether to show a notification or not.
 */
 function changeTheme( themeName, silent=0 ) {
+    
     for( var i = 0; i < a_themes.length; i ++) {
-        
         if( a_themes[ i ][ 0 ] == themeName ) {
             $("body").css("background", "url('" + a_themes[ i ][ 1 ] + "')");
             a_sound_settings.FOLDER = "sounds/" + a_themes[ i ][ 0 ] + "/";
             break;
         }
     }
+    
+    a_user_data[ "theme" ] = themeName;
    
     if( !silent )
         showNotification( "You have changed your theme to '" + themeName + "'" );

@@ -7,7 +7,7 @@ Clockwerk does not have any memory reading or setting functionalities. Nothing i
 
 The sounds are from http://www.dotasb.com/
 
-# Features
+# JAVA Features
 ![Preview](http://i.imgur.com/jq7M69k.png)
 
 The settings allow the user to decide whether they want the timer to work for every bounty rune or camp time stack. Both can be toggled on or off. Even though that is the case, if the user wants to turn the timer off there is a mute shortcut key that can be adjusted in the "Shortcuts" menu. The Shortcut menu allows the user to input any key they want.
@@ -16,7 +16,7 @@ The user is also allowed set the warning intervals. They can choose to let the p
 
 The volume is adjusted through a simple scrollbar. The timer at the bottom left shows the current game time according to the application.
 
-# Themes
+# JAVA Themes
 ![Preview](http://i.imgur.com/1E9zR0g.png)
 
 In version 1.1, themes were introduced. Users can create themes and load them directly into Clockwerk. By default, I have included 3 themes (Default Clockwerk Theme, Crystal Maiden and Invoker). Below is an example from "crystal maiden.ini"
@@ -43,17 +43,17 @@ gameclock = #0000FF
 
 **gameclock** - The color of the game clock in hex.
 
-# To-Do List
-
-- [x] Themes
-- [x] Save/Load Settings
-- [ ] (Possible) Dota 2 Clock Memory Reader
-- [ ] Shift/Control/Alt + Shortcut Key Combo
-
-# Web Version
+# WEB Features
 I've uploaded a web version of Clockwerk that works exactly how the Java version works. Unfortunately, javascript cannot detect keys while the browser isn't focused. Therefore the hotkeys only work when the user presses the hotkey in the browser.
 
 ![Preview](http://i.imgur.com/dhaN9dQ.jpg)
 ![Preview](http://i.imgur.com/Cg7Sf8k.jpg)
 
 ![Preview](http://i.imgur.com/wmVgq1C.jpg)
+
+# To-Do List
+
+- [x] Themes
+- [x] Save/Load Settings
+- [ ] (Possible) Dota 2 Clock Memory Reader
+- [ ] Shift/Control/Alt + Shortcut Key Combo
