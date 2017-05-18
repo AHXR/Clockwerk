@@ -24,6 +24,7 @@
 		
 		<link rel="stylesheet" href="style.css" type="text/css" />
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/flick/jquery-ui.css" type="text/css" />
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 		
 		<link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One" rel="stylesheet">
         
@@ -119,8 +120,8 @@
                     changeTheme( "Invoker" );
                 });
                 
-                updateClock( );       
-                
+                updateClock( );
+           
                 try {
                     if( b_db_error ) {
                         showNotification( "There was an error loading your settings!" );
@@ -137,11 +138,15 @@
                     changeTheme( a_user_data[ "theme" ], 1 );
                 }
 			}); 
+            
+            $(document).ready(function( ){
+                $('#layer').fadeIn(); 
+            });
 		</script>   
 	</head>
 	
 	<body>
-		<div id="layer">
+		<div id="layer">   
 			<div id="clock"></div>
             <div id="start" title="Clockwerk"><p>Welcome to Clockwerk. <br /><br />Just be aware that if you plan on using the web version of this application,
             you cannot activiate your shortcut keys <b>unless</b> the browser is focused. <br /><br />Download the client version for complete
@@ -191,7 +196,7 @@
                 
                 <fieldset>
                     <legend>Themes</legend>
-                    <div class="gensettings">
+                    <div class="gensettings">     
                         <label for="theme_cw">Clockwerk</label>
                         <input type="checkbox" name="theme_cw" id="theme_cw">
                         

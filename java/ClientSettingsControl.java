@@ -79,8 +79,31 @@ public class ClientSettingsControl {
 				f_ini.put( s_sec, GlobalFileUser.CAMPS.settings(), "1");
 				f_ini.put( s_sec, GlobalFileUser.WARNINGS.settings(), "1-1-1");
 				f_ini.put( s_sec, GlobalFileUser.VOLUME.settings(), "50");
-				f_ini.put( s_sec, GlobalFileUser.TOGGLE.settings(), GlobalKeyShortcuts.TOGGLE.settings() );
-				f_ini.put( s_sec, GlobalFileUser.MUTE.settings(), GlobalKeyShortcuts.MUTE.settings() );
+				
+				/*
+				 * In 1.4, shortcut key combinations were added. I've decided to store those
+				 * shortcut values in one line. This is later split and loaded in a similar
+				 * way.
+				 * 
+				 * s_tmp_combo code block could have been done in 1 line. It was only split up like that
+				 * just to make it easier to read.
+				 */
+				String
+					s_tmp_combo;
+				
+				s_tmp_combo = ( ShortcutKeyListener.b_combo_keys[ 0 ][ 0 ] ? "1-" : "0-" );
+				s_tmp_combo += ( ShortcutKeyListener.b_combo_keys[ 0 ][ 1 ] ? "1-" : "0-" );
+				s_tmp_combo += ( ShortcutKeyListener.b_combo_keys[ 0 ][ 2 ] ? "1-" : "0-" );
+				s_tmp_combo += GlobalKeyShortcuts.TOGGLE.settings();
+				f_ini.put( s_sec, GlobalFileUser.TOGGLE.settings(), s_tmp_combo );
+				
+				s_tmp_combo = ( ShortcutKeyListener.b_combo_keys[ 1 ][ 0 ] ? "1-" : "0-" );
+				s_tmp_combo += ( ShortcutKeyListener.b_combo_keys[ 1 ][ 1 ] ? "1-" : "0-" );
+				s_tmp_combo += ( ShortcutKeyListener.b_combo_keys[ 1 ][ 2 ] ? "1-" : "0-" );
+				s_tmp_combo += GlobalKeyShortcuts.MUTE.settings();
+				f_ini.put( s_sec, GlobalFileUser.MUTE.settings(), s_tmp_combo);
+				
+				
 				f_ini.put( s_sec, GlobalFileUser.THEME.settings(), "default.ini");
 				f_ini.store( );
 				
@@ -133,7 +156,24 @@ public class ClientSettingsControl {
 				TimerControlEvents.setWarningSignal( 0, s_warnings[ 0 ].equals("1") ? true : false );
 				TimerControlEvents.setWarningSignal( 15, s_warnings[ 1 ].equals("1") ? true : false );
 				TimerControlEvents.setWarningSignal( 30, s_warnings[ 2 ].equals("1") ? true : false );
-			
+				
+				/*
+				 * In the 1.4 update, the combination settings were also split by a delimiter. This is very similiar
+				 * to the code above.
+				 */
+				String[ ] s_combos = f_ini.get( s_sec, GlobalFileUser.TOGGLE.settings( ) ).split( "-" );
+				ShortcutKeyListener.b_combo_keys[ 0 ][ 0 ] = s_combos[ 0 ].equals("1") ? true : false;
+				ShortcutKeyListener.b_combo_keys[ 0 ][ 1 ] = s_combos[ 1 ].equals("1") ? true : false;
+				ShortcutKeyListener.b_combo_keys[ 0 ][ 2 ] = s_combos[ 2 ].equals("1") ? true : false;
+				GlobalKeyShortcuts.TOGGLE.changeValue( s_combos[ 3 ] );
+				
+				// Loading the mute shortcut now.
+				s_combos = f_ini.get( s_sec, GlobalFileUser.MUTE.settings( ) ).split( "-" );
+				ShortcutKeyListener.b_combo_keys[ 1 ][ 0 ] = s_combos[ 0 ].equals("1") ? true : false;
+				ShortcutKeyListener.b_combo_keys[ 1 ][ 1 ] = s_combos[ 1 ].equals("1") ? true : false;
+				ShortcutKeyListener.b_combo_keys[ 1 ][ 2 ] = s_combos[ 2 ].equals("1") ? true : false;
+				GlobalKeyShortcuts.MUTE.changeValue( s_combos[ 3 ] );
+				
 				/*
 				 * The volume is now retrieved from the .ini file. Due to the algorithm I used 
 				 * in MasterControlSound.java, I wanted to avoid having any sort of complications
@@ -150,11 +190,7 @@ public class ClientSettingsControl {
 				
 				MasterControlSound.changeVolume( i_volume );
 				MasterControlSound.i_volume_abs = i_volume;
-				
-				// Shortcuts are being retrieved here.
-				GlobalKeyShortcuts.TOGGLE.changeValue( f_ini.get( s_sec, GlobalFileUser.TOGGLE.settings() ) );
-				GlobalKeyShortcuts.MUTE.changeValue( f_ini.get( s_sec, GlobalFileUser.MUTE.settings() ) );
-				
+						
 				// Finally, the theme is being loaded based on the user's settings.
 				GlobalThemeControl.loadTheme( f_ini.get( s_sec, GlobalFileUser.THEME.settings() ) );
 			} catch (InvalidFileFormatException e) {
@@ -195,18 +231,30 @@ public class ClientSettingsControl {
 			 * store in the ini file.
 			 */
 			String
-				s_warnings;
+				s_split_string;
 			
-			s_warnings = TimerControlEvents.b_onTime ? "1-" : "0-";
-			s_warnings += TimerControlEvents.b_fifteen ? "1-" : "0-";
-			s_warnings += TimerControlEvents.b_thirty ? "1" : "0";
+			s_split_string = TimerControlEvents.b_onTime ? "1-" : "0-";
+			s_split_string += TimerControlEvents.b_fifteen ? "1-" : "0-";
+			s_split_string += TimerControlEvents.b_thirty ? "1" : "0";
 			
-			f_ini.put( s_sec, GlobalFileUser.WARNINGS.settings(), s_warnings );
+			f_ini.put( s_sec, GlobalFileUser.WARNINGS.settings(), s_split_string );
 			
-			// Saving the rest of the values.
+			// Quick switch to volume saving.
 			f_ini.put( s_sec, GlobalFileUser.VOLUME.settings(), MasterControlSound.i_volume_abs );
-			f_ini.put( s_sec, GlobalFileUser.TOGGLE.settings(), GlobalKeyShortcuts.TOGGLE.settings() );
-			f_ini.put( s_sec, GlobalFileUser.MUTE.settings(), GlobalKeyShortcuts.MUTE.settings() );
+			
+			// Back to the delimiter and the shortcut combo keys.
+			s_split_string = ( ShortcutKeyListener.b_combo_keys[ 0 ][ 0 ] ? "1-" : "0-" );
+			s_split_string += ( ShortcutKeyListener.b_combo_keys[ 0 ][ 1 ] ? "1-" : "0-" );
+			s_split_string += ( ShortcutKeyListener.b_combo_keys[ 0 ][ 2 ] ? "1-" : "0-" );
+			s_split_string += GlobalKeyShortcuts.TOGGLE.settings();
+			f_ini.put( s_sec, GlobalFileUser.TOGGLE.settings(), s_split_string );
+			
+			s_split_string = ( ShortcutKeyListener.b_combo_keys[ 1 ][ 0 ] ? "1-" : "0-" );
+			s_split_string += ( ShortcutKeyListener.b_combo_keys[ 1 ][ 1 ] ? "1-" : "0-" );
+			s_split_string += ( ShortcutKeyListener.b_combo_keys[ 1 ][ 2 ] ? "1-" : "0-" );
+			s_split_string += GlobalKeyShortcuts.MUTE.settings();
+			f_ini.put( s_sec, GlobalFileUser.MUTE.settings(), s_split_string );
+			
 			f_ini.put( s_sec, GlobalFileUser.THEME.settings(), GlobalThemeControl.s_theme_name );
 			f_ini.store( );
 			

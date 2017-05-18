@@ -16,10 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Imports
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
@@ -51,11 +47,18 @@ public class ShortcutKeyListener implements NativeKeyListener {
 	 * @s_startstop_key - Stores the start/stop key.
 	 * 
 	 * @s_mute_key - Stores the mute key.
+	 * 
+	 * @i_key_change - Allows ShortcutKeyGUI to know what key the client is changing.
 	 */
 	private static boolean 
 		debug = false;
 	private static String
 		s_text = "", s_debug_key = GlobalKeyShortcuts.DEBUG.settings(), s_startstop_key = GlobalKeyShortcuts.TOGGLE.settings(), s_mute_key = GlobalKeyShortcuts.MUTE.settings();
+	private static int
+		i_key_change;
+	public static boolean[ ][ ]
+		b_combo_keys = new boolean[ 2 ][ 3 ],
+		b_combo_pressed = new boolean[ 2 ][ 3 ];
 	
 	/*
 	 * This event is triggered the moment the user presses a key.
@@ -69,8 +72,10 @@ public class ShortcutKeyListener implements NativeKeyListener {
 		 */
 		s_text = NativeKeyEvent.getKeyText(e.getKeyCode());
 		
-		if( ( debug && s_text.equals( s_debug_key ) ) || ( !debug && s_text.equals( s_startstop_key ) ) ) {
-			
+		// This will let the program check whether the client might perform a combo.
+		updateComboStatus( s_text, true );
+		
+		if( ( getComboStatus( 0 ) ) && ( ( debug && s_text.equals( s_debug_key ) ) || ( !debug && s_text.equals( s_startstop_key ) ) || ( !debug && s_text.equals( GlobalKeyShortcuts.TOGGLE.settings( ) ) ) ) ) {		
 			/*
 			 * The start/stop key has now been pressed. The program now calls upon the ClockwerkTimer
 			 * class and the DotaAudioController class to adjust the proper variables and start/stop the timer.
@@ -89,17 +94,17 @@ public class ShortcutKeyListener implements NativeKeyListener {
 		/*
 		 * Mute key and the proper adjustments afterwards.
 		 */
-		if( s_text.equals( s_mute_key ) ) {
+		if( ( getComboStatus( 1 ) ) && s_text.equals( s_mute_key ) ) {
 			MasterControlSound dac = new MasterControlSound( );
 			dac.muteSoundSwitch( );
 		}
 	}
 
-	/*
-	 * Other events I didn't touch.
-	 */
 	@Override
 	public void nativeKeyReleased(NativeKeyEvent e) {
+		s_text = NativeKeyEvent.getKeyText(e.getKeyCode());
+		// This will let the program know the combo event isn't gonna happen.
+		updateComboStatus( s_text, false );
 	}
 
 	@Override
@@ -115,26 +120,106 @@ public class ShortcutKeyListener implements NativeKeyListener {
 	 * bind it to the variable. But then I wanted to put non-English keyboards into consideration.
 	 */
 	public void showShortcutDialogue( int keyid ) {
-		JFrame gui_shortcut = new JFrame( "Change Shortcut" );
-	    String s_key = JOptionPane.showInputDialog( gui_shortcut, "Type the key you would like to change this shortcut to. Your current keys: \r\n\r\nStart/Stop: '" + GlobalKeyShortcuts.TOGGLE.settings() + "'\r\nMute: '" + GlobalKeyShortcuts.MUTE.settings() + "'");
-
-	    /*
-	     * The key needs to be a proper value. If it's nothing or the user decided to cancel the shortcut change, nothing will happen.
-	     */
-	    if( s_key != null ) {
-	    	switch( keyid ) {
-	    		case 0: {
-	    			GlobalKeyShortcuts.TOGGLE.changeValue( s_key );
-	    			ClientSettingsControl.saveSettings();
-	    			break;
-	    		}
-	    		
-	    		case 1: {
-	    			GlobalKeyShortcuts.MUTE.changeValue( s_key );
-	    			ClientSettingsControl.saveSettings();
-	    			break;
-	    		}
-	    	}
-	    }
+		// Setting the i_key_change variable so ShortcutKeyGUI can access it.
+		i_key_change = keyid;
+		
+		// Creating and showing the dialog.
+		ShortcutKeyGUI sk_gui = new ShortcutKeyGUI( );
+		sk_gui.lblText.setText("<html>Type the key you would like to change this shortcut to. Your current keys: <br /><br />Start/Stop: '" + GlobalKeyShortcuts.TOGGLE.settings() + "'<br />Mute: '" + GlobalKeyShortcuts.MUTE.settings() + "'</html>");
+		
+		switch( keyid ) {
+			case 0: {
+				sk_gui.txtKey.setText( GlobalKeyShortcuts.TOGGLE.settings() );
+				
+				if( b_combo_keys[ 0 ][ 0 ] )
+					sk_gui.chckbxShift.setSelected( true );
+				
+				if( b_combo_keys[ 0 ][ 1 ] )
+					sk_gui.chckbxCtrl.setSelected( true );
+				
+				if( b_combo_keys[ 0 ][ 2 ] )
+					sk_gui.chckbxAlt.setSelected( true );
+				break;
+			}
+			case 1: {
+				sk_gui.txtKey.setText( GlobalKeyShortcuts.MUTE.settings() );
+				
+				if( b_combo_keys[ 1 ][ 0 ] )
+					sk_gui.chckbxShift.setSelected( true );
+				
+				if( b_combo_keys[ 1 ][ 1 ] )
+					sk_gui.chckbxCtrl.setSelected( true );
+				
+				if( b_combo_keys[ 1 ][ 2 ] )
+					sk_gui.chckbxAlt.setSelected( true );
+				break;
+			}
+		}
+		
+		sk_gui.setVisible( true );
+	}
+	
+	/*
+	 * This function gives ShortcutKeyGUI access to the i_key_change function.
+	 */
+	public static int getKeyChange( ) {
+		return i_key_change;
+	}
+	
+	/*
+	 * updateComboBasedOnKey is called in ShortcutKeyGUI. The purpose of this function is to 
+	 * quickly update the b_combo_keys array.
+	 */
+	public static void updateComboBasedOnKey( boolean shift, boolean ctrl, boolean alt ) {
+		b_combo_keys[ i_key_change ][ 0 ] = shift;
+		b_combo_keys[ i_key_change ][ 1 ] = ctrl;
+		b_combo_keys[ i_key_change ][ 2 ] = alt;
+	}
+	
+	/*
+	 * This will update the current combo status based on the results from
+	 * nativeKeyPressed and nativeKeyReleased
+	 */
+	private void updateComboStatus( String charcode, boolean val ) {
+		if( charcode.equals( "Shift" ) ) {
+			if( b_combo_keys[ 0 ][ 0 ] ) // If the toggle-shift combo key is toggled on/off.
+				b_combo_pressed[ 0 ][ 0 ] = val;
+			
+			if( b_combo_keys[ 1 ][ 0 ] ) // If the mute-shift combo key is toggled on/off.
+				b_combo_pressed[ 1 ][ 0 ] = val;
+		}
+		
+		if( charcode.equals( "Ctrl" ) ) {
+			if( b_combo_keys[ 0 ][ 1 ] ) // If the toggle-ctrl combo key is toggled on/off.
+				b_combo_pressed[ 0 ][ 1 ] = val;
+			
+			if( b_combo_keys[ 1 ][ 1 ] ) // If the mute-ctrl combo key is toggled on/off.
+				b_combo_pressed[ 1 ][ 1 ] = val;
+		}
+		
+		if( charcode.equals( "Alt" ) ) {
+			if( b_combo_keys[ 0 ][ 2 ] ) // If the toggle-alt combo key is toggled on/off.
+				b_combo_pressed[ 0 ][ 2 ] = val;
+			
+			if( b_combo_keys[ 1 ][ 2 ] ) // If the mute-alt combo key is toggled on/off.
+				b_combo_pressed[ 1 ][ 2 ] = val;
+		}
+	}
+	
+	/*
+	 * Returns the combo status. If the combo key is enabled but the combo key is NOT pressed 
+	 * then return false.
+	 * 
+	 * This means when the ShortCutKeyListener is active, it will not activate the shortcut key
+	 * event unless all the combo keys are together. Examples being CTRL+ALT+F5 or SHIFT+CTRL+F7
+	 */
+	private boolean getComboStatus( int keyCode ) {
+		for( int i = 0; i <= 2; i ++ ) {
+		//	System.out.print( b_combo_keys[ keyCode ][ i ] + " | " + b_combo_pressed[ keyCode ][ i ] + "\r\n" );
+			if( b_combo_keys[ keyCode ][ i ] == true && b_combo_pressed[ keyCode ][ i ] == false )
+				return false;
+		}
+		
+		return true;
 	}
 }

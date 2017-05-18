@@ -50,6 +50,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 /*
  * This GUI was built through Eclipse's WindowBuilder (https://eclipse.org/windowbuilder/). 
@@ -121,6 +122,7 @@ public class SwingGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public SwingGUI() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(SwingGUI.class.getResource("/clockwerk/images/icon.png")));
 		setResizable(false);
 		/*
 		 * Here is where I create a new instance called "cwt" which stands for (C)lock(W)erk(T)imer.
@@ -267,11 +269,6 @@ public class SwingGUI extends JFrame {
 		lblGameTime.setBounds(10, 314, 447, 36);
 		contentPane.add(lblGameTime);
 		
-		JLabel lblBackground = new JLabel("");
-		lblBackground.setIcon(null);
-		lblBackground.setBounds(0, 0, 665, 371);
-		contentPane.add(lblBackground);
-		
 		/*
 		 * GUI Creation Ends. But now we're going to load some themes dynamically based on what's inside of the "themes" folder.
 		 * This program gathers all the file names inside of "themes" and creates menus out of them.
@@ -345,6 +342,12 @@ public class SwingGUI extends JFrame {
 		chckbxmntmSeconds.setSelected( TimerControlEvents.b_thirty ? true : false );
 		chckbxmntmSeconds_1.setSelected( TimerControlEvents.b_fifteen ? true : false );
 		chckbxmntmOnTime.setSelected( TimerControlEvents.b_onTime ? true : false );
+
+		
+		JLabel lblBackground = new JLabel("");
+		lblBackground.setIcon(null);
+		lblBackground.setBounds(0, 0, 665, 371);
+		contentPane.add(lblBackground);
 		
 		/*
 		 * This is where GlobalThemeControl becomes extremely active. This is a bit sloppy 
